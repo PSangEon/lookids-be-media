@@ -42,7 +42,7 @@ public class MediaWriteController {
 	}
 
 	@Operation(summary = "deleteMedia API", description = "deleteMedia API 입니다.")
-	@PostMapping("/delete")
+	@PutMapping("/delete")
 	public BaseResponse<Void> deleteMedia(@RequestBody MediaDeleteVo mediaDeleteVo) {
 		mediaService.deleteMedia(MediaDeleteDto.toDto(mediaDeleteVo));
 		return new BaseResponse<>(BaseResponseStatus.SUCCESS);
