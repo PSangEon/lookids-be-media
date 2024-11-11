@@ -9,15 +9,17 @@ import lookids.media.media.vo.in.MediaDeleteVo;
 @Getter
 @NoArgsConstructor
 public class MediaDeleteDto {
+	private String userUuid;
 	private String mediaCode;
 
 	@Builder
-	public MediaDeleteDto(String mediaCode) {
+	public MediaDeleteDto(String userUuid, String mediaCode) {
+		this.userUuid = userUuid;
 		this.mediaCode = mediaCode;
 	}
 
-	public static MediaDeleteDto toDto(MediaDeleteVo mediaDeleteVo) {
-		return MediaDeleteDto.builder().mediaCode(mediaDeleteVo.getMediaCode()).build();
+	public static MediaDeleteDto toDto(MediaDeleteVo mediaDeleteVo, String userUuid) {
+		return MediaDeleteDto.builder().userUuid(userUuid).mediaCode(mediaDeleteVo.getMediaCode()).build();
 	}
 
 	public Media toEntity(Media media) {

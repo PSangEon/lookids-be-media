@@ -12,6 +12,7 @@ import lookids.media.media.domain.Media;
 import lookids.media.media.dto.in.MediaDeleteDto;
 import lookids.media.media.dto.in.MediaRequestDto;
 import lookids.media.media.dto.in.MediaUpdateDto;
+import lookids.media.media.dto.out.MediaListResponseDto;
 import lookids.media.media.dto.out.MediaResponseDto;
 import lookids.media.media.infrastructure.MediaRepository;
 
@@ -28,16 +29,24 @@ public class MediaServiceImpl implements MediaService {
 	}
 
 	@Override
+	public MediaListResponseDto createMediaList(List<MediaRequestDto> mediaRequestDtoList) {
+
+		List<Media> mediaList = mediaRepository.saveAll(
+			mediaRequestDtoList.stream().map(MediaRequestDto::toEntity).toList());
+		return MediaListResponseDto.toDto(mediaList);
+	}
+
+	@Override
 	public void updateMedia(MediaUpdateDto mediaUpdateDto) {
-		Media media = mediaRepository.findByMediaCodeAndState(mediaUpdateDto.getMediaCode(), true)
-			.orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_DATA));
+		Media media = mediaRepository.findByMediaCodeAndUserUuidAndState(mediaUpdateDto.getMediaCode(),
+			mediaUpdateDto.getUserUuid(), true).orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_DATA));
 		mediaRepository.save(mediaUpdateDto.toEntity(media));
 	}
 
 	@Override
 	public void deleteMedia(MediaDeleteDto mediaDeleteDto) {
-		Media media = mediaRepository.findByMediaCodeAndState(mediaDeleteDto.getMediaCode(), true)
-			.orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_DATA));
+		Media media = mediaRepository.findByMediaCodeAndUserUuidAndState(mediaDeleteDto.getMediaCode(),
+			mediaDeleteDto.getUserUuid(), true).orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_DATA));
 		mediaRepository.save(mediaDeleteDto.toEntity(media));
 	}
 
@@ -49,7 +58,7 @@ public class MediaServiceImpl implements MediaService {
 
 	@Override
 	public List<MediaResponseDto> readMediaList(String userUuid) {
-		List<Media> mediaList = mediaRepository.findByUserUuid(userUuid);
+		List<Media> mediaList = mediaRepository.findByUserUuidAndState(userUuid, true);
 		return mediaList.stream().map(MediaResponseDto::toDto).toList();
 	}
 }
